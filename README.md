@@ -5,58 +5,10 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![Model: LLaMA 3.2-1B](https://img.shields.io/badge/model-LLaMA%203.2--1B-green.svg)](https://huggingface.co/meta-llama/Llama-3.2-1B)
-[![Status: Production Ready](https://img.shields.io/badge/Status-Production%20Ready-brightgreen.svg)](https://github.com/youshen-lim/llama-tinker-lora-newsletter)
 
----
-
-## ✅ **DEPLOYMENT STATUS: PRODUCTION READY**
-
-**Deployment Date**: October 20, 2025
-**Status**: ✅ **ALL 8 PHASES COMPLETE**
-
-| Phase | Task | Status |
-|-------|------|--------|
-| 1-2 | LoRA Merge | ✅ COMPLETE |
-| 3-5 | Ollama Import | ✅ COMPLETE |
-| 6 | Configuration | ✅ COMPLETE |
-| 7 | Integration Tests | ✅ COMPLETE (4/4 passed) |
-| 8 | Cleanup | ✅ COMPLETE |
-
-**Active Model**: `llama3.2:newsletter-lora` (2.5 GB) - Deployed and verified ✅
-
----
-
-## 📊 **CURRENT SYSTEM STATUS**
-
-### **Production Readiness**
-- ✅ **All 8 Phases Complete**: LoRA merge, Ollama import, configuration, testing, cleanup
-- ✅ **Integration Tests**: 4/4 PASSED
-- ✅ **Performance**: +162% quality improvement
-- ✅ **System Status**: Operational and verified
-- ✅ **Risk Level**: LOW (zero critical issues)
-
-### **Performance Metrics**
-| Metric | Before | After | Improvement |
-|--------|--------|-------|-------------|
-| Quality Score | 0.3302 | 0.8674 | **+162%** ✅ |
-| JSON Validity | 0% | 100% | **+100%** ✅ |
-| ROUGE-1 | 0.0501 | 0.7714 | **+1439%** ✅ |
-| BERTScore | 0.8003 | 0.9649 | **+20%** ✅ |
-| Inference Time | N/A | 5.1 sec | Per news article ✅ |
-
-### **Active Model Details**
-- **Name**: `llama3.2:newsletter-lora`
-- **Size**: 2.5 GB (merged model)
-- **Base**: LLaMA 3.2-1B (1 billion parameters)
-- **LoRA Config**: rank=32, alpha=32, target_modules=all-linear
-- **Status**: Deployed and verified ✅
-
-### **Workspace Organization**
-- **Root Directory**: 18 essential files
-- **Documentation**: 6 files (consolidated)
-- **Scripts**: 5 deployment scripts
-- **Configuration**: 3 files
-- **Cleanup**: 47 redundant files removed (-76%)
+> **Version 2 supersedes this pilot.** This repository is the October 2025 pilot (v1). Version 2 uses 460 annotated news items, a 96 item held out test set and a three model comparison. See [llama-tinker-lora-news-enhancer-v2](https://github.com/youshen-lim/llama-tinker-lora-news-enhancer-v2) and its [Corrections](https://github.com/youshen-lim/llama-tinker-lora-news-enhancer-v2#-corrections) section.
+>
+> **The v1 quality metrics need a rerun.** The v1 evaluation scored 5 examples. The reference outputs were template strings. A November 2026 review of the notebook code found that the evaluation took its references from different articles than the predictions. The v1 quality score (0.8674), ROUGE, BERTScore and the "+162%" figure therefore do not measure article analysis quality. See [Limitations](#limitations) and [Corrections](#corrections).
 
 ---
 
@@ -68,676 +20,120 @@ This is a personal project addressing my need around **news analysis of the fast
 
 ### **Intended Outcome**
 
-I collect AI-related news content from various sources and needed a way to enhance raw news content with rich semantic metadata. **This LLM enables Google NotebookLM and its Gemini models to conduct deeper, structured pattern-finding across trends and developments in the fast-moving AI industry.**
+I wanted structured metadata on each news item. My goal was to help Google NotebookLM and its Gemini models find patterns across trends and developments in the AI industry. I did not measure whether the metadata improved NotebookLM output.
 
 ### **What This Project Does**
 
 - **Enhance and add rich semantic metadata to AI-related news content** as part of my news analyst application system
-- **Explore, test and compare Thinking Machines' Tinker's managed training & finetuning API service**
+- **Explore and compare the managed Tinker training and fine tuning API from Thinking Machines**
 - **Explore LastMile AI's MCP (Model Context Protocol) framework** for building AI-powered applications
 
-### **Why This Matters**
+### **Why This Matters to Me**
 
-- **3-5x better content organization** through semantic understanding
-- **10x more metadata** extracted from news content
-- **2-3x better cross-article insights** for knowledge synthesis
-- **40-60% richer NotebookLM outputs** for analysis and research
-- **Structured pattern-finding** across AI industry trends and developments
-
-### **📖 Full Project Definition**
-
-For comprehensive context on this project's goals, architecture, and intended outcomes, see:
-**[PROJECT_DEFINITION_AND_CONTEXT.md](docs/PROJECT_DEFINITION_AND_CONTEXT.md)**
+I wanted structured fields (relevance, companies, topics) on each news item. Those fields would let NotebookLM compare items across weeks. I did not measure the effect on NotebookLM output.
 
 ---
 
 ## 🏗️ System Architecture
 
-This fine-tuning project is part of a larger **News Analyst MCP Agent** system:
+This fine tuning project feeds a private personal project, the News Analyst MCP Agent.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                   News Analyst MCP Agent                    │
-│  (Production system for automated news content processing)  │
+│        (Private personal project, not public)               │
 └────────────────────┬────────────────────────────────────────┘
                      │
                      ▼
          ┌───────────────────────┐
          │  LLM Enhancement Layer │ ← This Project
-         │  (Fine-tuned LoRA)     │
+         │  (Tinker LoRA adapter  │
+         │   served by Ollama)    │
          └───────────────────────┘
-                     │
-        ┌────────────┴────────────┐
-        ▼                         ▼
-┌───────────────┐         ┌──────────────┐
-│ Tinker LoRA   │         │ Unsloth LoRA │
-│ (Cloud-based) │         │ (Local)      │
-└───────────────┘         └──────────────┘
 ```
+
+The agent configuration names the Ollama model `llama3.2:newsletter-lora`, which I built from the Tinker adapter. I also trained an Unsloth adapter in the notebook. The Unsloth v1 adapter failed the JSON check, and the agent does not use it.
 
 **Integration Context:**
 - **Deployment**: Local Windows Surface Pro (Intel Iris Xe, 16GB RAM)
-- **Base Model**: LLaMA 3.2-1B (1 billion parameters, optimized for edge devices)
+- **Base Model**: LLaMA 3.2-1B (1 billion parameters)
 - **Architecture**: LoRA adapters for parameter-efficient fine-tuning
-- **Production System**: See [`docs/NEWS_ANALYST_SYSTEM_ARCHITECTURE.md`](docs/NEWS_ANALYST_SYSTEM_ARCHITECTURE.md)
+- **System overview**: See [`docs/NEWS_ANALYST_SYSTEM_ARCHITECTURE.md`](docs/NEWS_ANALYST_SYSTEM_ARCHITECTURE.md). That document still repeats unmeasured benefit figures that this README removed.
 
 ---
 
-## 🔬 LoRA vs Full Fine-Tuning Comparison
+## 🔬 Why LoRA
 
-This project uses **LoRA (Low-Rank Adaptation)** instead of full fine-tuning for several critical reasons:
+I chose LoRA because it fit the free Colab GPU and produced a small adapter. I did not run full fine tuning, so I have no measured comparison between LoRA and full fine tuning.
 
-| Criterion | LoRA | Full Fine-Tuning | Winner |
-|-----------|------|------------------|--------|
-| **Memory (Colab T4)** | 2.5GB | 17GB (exceeds 15GB limit) | ✅ LoRA |
-| **Training Speed** | 30-45 min | 60-90 min (if feasible) | ✅ LoRA |
-| **Model Size** | 50-100MB adapter | 1.2GB full model | ✅ LoRA |
-| **Parameter Efficiency** | 0.5% trainable | 100% trainable | ✅ LoRA |
-| **Catastrophic Forgetting** | Low risk | High risk | ✅ LoRA |
-| **Data Requirements** | 50-200 examples | 500-5000 examples | ✅ LoRA |
-| **Performance** | 90-95% of full FT | 100% (theoretical) | ⚠️ Full FT |
+What the files record:
+- The Tinker adapter uses LoRA rank 32, alpha 32, on all linear layers ([`adapter_config.json`](models/tinker/tinker_model_latest/adapter_config.json)).
+- The Unsloth run reported 11,272,192 trainable parameters of 1,247,086,592 (0.90%) in notebook cell 70.
+- The Tinker run did not record a trainable parameter count.
 
-**Verdict**: LoRA achieves **9.2/10** weighted score vs **6.0/10** for full fine-tuning.
-
-**Key Advantages**:
-- ✅ Fits within Google Colab free tier (T4 GPU, 15GB VRAM)
-- ✅ Deployable on limited hardware (Intel Iris Xe, 16GB RAM)
-- ✅ Preserves general language capabilities
-- ✅ 99.5% parameter reduction (1-5M trainable vs 1.2B total)
-
-See [`docs/LORA_COMPARISON.md`](docs/LORA_COMPARISON.md) for detailed analysis.
+[`docs/LORA_COMPARISON.md`](docs/LORA_COMPARISON.md) explains my reasoning. Its weighted scores are my own ratings, not measurements.
 
 ---
 
-## 🏛️ Architecture & Design Decisions
+## 🏛️ Why Ollama
 
-### **LLM Inference Architecture: Ollama vs llama.cpp**
-
-This project uses **Ollama** for LLM inference instead of llama.cpp for several critical reasons:
-
-#### **Key Comparison**
-
-| Aspect | Ollama | llama.cpp | Winner |
-|--------|--------|-----------|--------|
-| **Model Loading** | 5-15 sec (optimized) | 30-60+ sec (timeout issues) | ✅ Ollama |
-| **Memory Efficiency** | Auto-managed, unload after inactivity | Manual, stays loaded | ✅ Ollama |
-| **Windows Support** | Well-tested, robust | Known compatibility issues | ✅ Ollama |
-| **Error Handling** | Robust retry mechanisms | Basic timeout handling | ✅ Ollama |
-| **Setup Complexity** | Single installer | Manual binary + model | ✅ Ollama |
-| **API Interface** | Clean HTTP API | Command-line only | ✅ Ollama |
-
-#### **Why Ollama?**
-
-1. **Reliability**: Robust model loading with automatic retry mechanisms
-2. **Resource Optimization**: Auto-unload models after inactivity (perfect for intermittent use)
-3. **Windows Compatibility**: Well-tested on Windows, fewer compatibility issues
-4. **Ease of Setup**: Single installer, automatic model management
-5. **API Interface**: Clean HTTP API for easier integration with MCP agents
-
-#### **Performance Characteristics**
-
-- **Model Loading**: 5-15 seconds (vs 30-60+ seconds with llama.cpp)
-- **Memory Usage**: 4-5GB during inference, auto-unload after inactivity
-- **Inference Speed**: 10-20 tokens/second on CPU-only hardware
-- **First Token Latency**: 1-3 seconds
-
-**See [`docs/LLAMA_CPP_VS_OLLAMA_ANALYSIS.md`](docs/LLAMA_CPP_VS_OLLAMA_ANALYSIS.md) for detailed technical analysis.**
-
-### **Fine-Tuning Approach: LoRA vs Full Fine-Tuning**
-
-This project uses **LoRA (Low-Rank Adaptation)** instead of full fine-tuning:
-
-#### **Key Advantages**
-
-| Criterion | LoRA | Full Fine-Tuning |
-|-----------|------|------------------|
-| **Memory (Colab T4)** | 2.5GB ✅ | 17GB (exceeds limit) ❌ |
-| **Training Speed** | 30-45 min ✅ | 60-90 min ❌ |
-| **Model Size** | 50-100MB ✅ | 1.2GB ❌ |
-| **Parameter Efficiency** | 99.5% reduction ✅ | 100% trainable ❌ |
-| **Catastrophic Forgetting** | Low risk ✅ | High risk ❌ |
-| **Performance** | 90-95% of full FT ✅ | 100% (theoretical) |
-
-#### **Why LoRA?**
-
-1. **Technical Feasibility**: Only LoRA fits within Colab's 15GB VRAM limit
-2. **Resource Efficiency**: 99.5% parameter reduction with 90-95% performance retention
-3. **Operational Benefits**: 3x faster iteration, instant rollback, lightweight deployment
-4. **Strategic Alignment**: Perfect fit for zero-cost, local-first architecture
-5. **Production Readiness**: Lower risk, higher reliability, easier maintenance
-
-**Weighted Score**: LoRA **9.2/10** vs Full Fine-Tuning **6.0/10**
-
-**See [`docs/LoRA_vs_Full_Finetuning_Comparison.md`](docs/LoRA_vs_Full_Finetuning_Comparison.md) for detailed comparison.**
+I used Ollama because it installed easily on my Windows laptop and exposes an HTTP API. I did not benchmark it against llama.cpp.
 
 ---
 
-## 📊 Results & Performance Metrics
+## 📊 Results (Pilot, Needs Rerun)
 
-### **Achieved Improvements (Tinker LoRA vs Base Model)**
+### **What the evaluation did**
 
-| Metric | Before | After | Improvement | Status |
-|--------|--------|-------|-------------|--------|
-| **Quality Score** | 0.3302 | 0.8674 | **+162%** ✅ | EXCELLENT |
-| **JSON Validity** | 0% | 100% | **+100%** ✅ | PERFECT |
-| **ROUGE-1** | 0.0501 | 0.7714 | **+1439%** ✅ | EXCELLENT |
-| **BERTScore** | 0.8003 | 0.9649 | **+20%** ✅ | EXCELLENT |
-| **Consistency** | 45.2% CV | 0.0% CV | **-100%** ✅ | PERFECT |
-| **Inference Time** | N/A | 5.1 sec | Per newsletter | OPTIMAL |
+- The notebook ran the evaluation on 5 examples (notebook cell 79, `num_samples=5`).
+- The notebook generated the 5 predictions from rows of the 101 row annotated training file. The evaluation configuration sets the test data path to the training file (`notebooks/news_analyst_1.py`, line 2959).
+- The metric code then took the reference outputs from the separate 246 row test file (`notebooks/news_analyst_1.py`, lines 4134 to 4144). The references therefore came from different articles than the predictions.
+- The assistant targets in the data files are fixed template responses, not article specific analyses.
 
-### **Model Comparison**
+For these reasons the quality score, ROUGE, BERTScore and Sentence-BERT values in `results/metrics/` do not measure article analysis quality. I removed them from this README. They need a rerun with matched predictions and references on held out articles.
 
-#### **Comprehensive Model Evaluation**
+### **What the 5 outputs show**
+
+On the 5 rows, only the Tinker adapter returned valid JSON. The base model returned markdown. The Unsloth v1 adapter returned malformed JSON with placeholder text. Every Tinker output was 191 characters long. Tinker returned only two distinct responses across the 5 rows, and both are template responses from the training data. The evidence is in [`results/metrics/side_by_side_comparison.csv`](results/metrics/side_by_side_comparison.csv) and [`results/metrics/comprehensive_metrics.csv`](results/metrics/comprehensive_metrics.csv).
+
+### **Charts from the pilot**
+
+The charts below show the invalid metrics described above. I kept them as a record of the pilot. Do not read them as evidence of quality.
 
 ![Comprehensive Evaluation](images/comprehensive_evaluation.png)
 
-#### **Advanced Metrics Comparison**
-
 ![Advanced Metrics Comparison](images/advanced_evaluation_metrics.png)
 
-#### **Performance Comparison Table**
+### **Metrics the notebook computed**
 
-| Model | Quality Score | JSON Valid | ROUGE-1 | BERTScore | Consistency (CV) | Training Time |
-|-------|--------------|------------|---------|-----------|-----------------|---------------|
-| **Tinker LoRA** ⭐ | **0.8674** | **100%** | **0.7714** | **0.9649** | **0.0%** ✅ | 2.65 min |
-| Unsloth LoRA | 0.2664 | 0% | 0.0311 | 0.7721 | 156.3% | 0.94 min |
-| Base Model | 0.3302 | 0% | 0.0501 | 0.8003 | 45.2% | N/A |
+- **JSON validity**: share of outputs that parse as JSON.
+- **ROUGE-1, ROUGE-2, ROUGE-L**: word and sequence overlap with the reference.
+- **BERTScore**: similarity of contextual embeddings with the reference.
+- **Sentence-BERT cosine similarity**: sentence level similarity with the reference.
+- **Toxicity**: Detoxify score of each output.
+- **Response length**: characters and words per output.
+- **Composite quality score** (from the notebook code, `notebooks/news_analyst_1.py`, lines 4621 to 4627): 0.2 × ROUGE-1 + 0.2 × ROUGE-L + 0.3 × BERTScore F1 + 0.2 × Sentence-BERT similarity + 0.1 × JSON validity.
 
-**Winner**: **Tinker LoRA** - Best performance across all metrics ⭐
-
-### **Key Achievements**
-
-1. ✅ **Perfect JSON Output**: 100% valid JSON (vs 0% for base model)
-2. ✅ **Semantic Excellence**: +20% BERTScore improvement
-3. ✅ **N-gram Overlap**: +1439% ROUGE-1 improvement
-4. ✅ **Perfect Consistency**: 0% variance (vs 45.2% for base model)
-5. ✅ **Fast Inference**: 5.1 seconds per news article
-6. ✅ **Production Ready**: All tests passing (4/4)
-
-### **Performance Metrics Explained**
-
-- **Quality Score**: Composite metric (ROUGE + BERTScore + JSON validation)
-- **JSON Validation**: Schema compliance for structured output
-- **ROUGE-1**: N-gram overlap with reference summaries
-- **BERTScore**: Semantic similarity using contextual embeddings
-- **Consistency (CV)**: Coefficient of variation (lower is better)
+The notebook did not compute relevance or faithfulness scores.
 
 ---
 
-## 📊 **COMPREHENSIVE EVALUATION METRICS**
+## 🖥️ Local Use (October 2025)
 
-### **Terminology Clarification**
-
-**Important**: The model processes **individual news articles**, not full newsletters.
-
-| Term | Definition |
-|------|-----------|
-| **News Article** | Individual news item from sources like TLDR |
-| **News Content** | Individual news article or content item being processed |
-| **Inference Time** | 5.1 seconds per **news article** (NOT per collection) |
-| **Model Input** | Single article + structured prompt |
-| **Model Output** | JSON with relevance score, summary, insights |
-| **Batch Processing** | Processing multiple articles to create analysis collection |
-
-**Example**: Processing 10 news articles takes ~51 seconds total (5.1s × 10 articles)
-
-For complete terminology definitions, see [TERMINOLOGY.md](TERMINOLOGY.md).
-
-### **All 11 Evaluation Metrics Defined**
-
-#### **1. ROUGE Scores (Summary Quality)**
-- **ROUGE-1**: Unigram overlap [0-1] - Good: >0.6, Excellent: >0.75
-- **ROUGE-2**: Bigram overlap [0-1] - Good: >0.4, Excellent: >0.6
-- **ROUGE-L**: Longest common subsequence [0-1] - Good: >0.4, Excellent: >0.6
-- **Measures**: Word/phrase/sequence overlap between generated and reference
-- **Limitation**: Only surface-level overlap, doesn't capture semantic meaning
-
-#### **2. BLEU Score (Translation Quality)**
-- **Range**: [0-1]
-- **Good**: >0.3, Excellent: >0.5
-- **Measures**: N-gram precision in generated text
-- **Limitation**: Precision-focused, doesn't penalize missing content
-
-#### **3. BERTScore (Semantic Similarity)**
-- **Precision**: % of generated tokens matching reference [0-1]
-- **Recall**: % of reference tokens matching generated [0-1]
-- **F1**: Harmonic mean [0-1] - Good: >0.8, Excellent: >0.95
-- **Measures**: Semantic similarity using contextual embeddings
-- **Advantage**: Captures meaning, handles paraphrasing and synonyms
-
-#### **4. Sentence-BERT Cosine Similarity**
-- **Range**: [0-1]
-- **Good**: >0.7, Excellent: >0.85
-- **Measures**: Sentence-level semantic alignment
-- **Difference from BERTScore**: Holistic vs granular comparison
-
-#### **5. Toxicity Score (Content Safety)**
-- **Range**: [0-1] (lower is better)
-- **Acceptable**: <0.1, Good: <0.05, Excellent: <0.01
-- **Measures**: Harmful/toxic content detection
-- **Library**: Detoxify (Unitary team)
-
-#### **6. Relevance Score (Task Relevance)**
-- **Range**: [1-10]
-- **Good**: >7, Excellent: >8
-- **Measures**: How relevant analysis is to input article
-- **Criteria**: Addresses main topic, insights related to content
-
-#### **7. Faithfulness Score (Factual Consistency)**
-- **Range**: [0-1]
-- **Good**: >0.8, Excellent: >0.95
-- **Measures**: Factual consistency with source article
-- **Difference from Relevance**: Relevance=about article, Faithfulness=factually correct
-
-#### **8. JSON Validity Rate (Format Compliance)**
-- **Range**: [0-100%]
-- **Good**: >90%, Excellent: 100%
-- **Measures**: % of outputs that are valid JSON
-- **Importance**: Critical for production systems
-
-#### **9. Overall Quality Score (Composite)**
-- **Calculation**: Weighted average of multiple metrics
-- **Range**: [0-1]
-- **Good**: >0.6, Excellent: >0.8
-- **Formula**: 0.25×ROUGE-1 + 0.15×ROUGE-2 + 0.15×ROUGE-L + 0.20×BERTScore F1 + 0.15×Semantic Similarity + 0.10×JSON Validity
-
-#### **10. Response Length Metrics**
-- **Character Count**: Total characters in response
-- **Word Count**: Total words in response
-- **Average Word Length**: Characters per word
-- **Good Range**: 100-500 characters, 20-100 words
-
-#### **11. Inference Time (Performance)**
-- **Measured in**: Seconds per news article
-- **Good**: <5s, Excellent: <2s
-- **Includes**: Model loading and inference
-- **Example**: 5.1s per article × 10 articles = 51 seconds total for batch processing
-
-For comprehensive definitions with examples, see [EVALUATION_METRICS_DEFINITIONS.md](EVALUATION_METRICS_DEFINITIONS.md).
-
-### **Comprehensive Model Evaluation Script**
-
-Use `comprehensive_model_evaluation.py` to evaluate the model:
-
-```bash
-python comprehensive_model_evaluation.py
-```
-
-**Metrics Included**:
-- Response length (characters, words, avg word length)
-- JSON validity tracking
-- Success rate calculation
-- Inference time measurement (per news article)
-- Aggregate statistics for batch processing
-
-**Output**:
-- Console summary with all metrics
-- JSON file: `comprehensive_evaluation_results.json`
-- Detailed statistics for each sample
+I merged the Tinker LoRA adapter, imported it into Ollama as `llama3.2:newsletter-lora`, and pointed my private News Analyst agent at it. That agent is not public, so these steps cannot be reproduced from this repository. The integration test script and deployment logs are not part of this repository. Ollama is available at https://ollama.com.
 
 ---
 
-## ✅ **CRITICAL UPDATES - OCTOBER 21, 2025**
-
-### **Task 1: Terminology Clarification** ✅ COMPLETE
-
-**Problem**: Incorrect use of "per newsletter" instead of "per news article"
-
-**Solution**:
-- Created comprehensive [TERMINOLOGY.md](TERMINOLOGY.md) with 11 core terms defined
-- Updated all references across documentation and code
-- Clarified common confusion points with before/after examples
-
-**Key Correction**:
-- ❌ Before: "5.1 seconds per newsletter"
-- ✅ After: "5.1 seconds per news article"
-
-### **Task 2: Comprehensive Model Evaluation** ✅ COMPLETE
-
-**Deliverable**: `comprehensive_model_evaluation.py`
-
-**Metrics Included**:
-- Response length metrics (characters, words, avg word length)
-- JSON validity tracking
-- Success rate calculation
-- Inference time per news article
-- Aggregate statistics
-
-**Usage**:
-```bash
-python comprehensive_model_evaluation.py
-```
-
-### **Task 3: Metrics Definitions & Visualizations** ✅ COMPLETE
-
-**Deliverables**:
-1. **[EVALUATION_METRICS_DEFINITIONS.md](EVALUATION_METRICS_DEFINITIONS.md)** - Comprehensive guide to all 11 metrics
-2. **`visualize_evaluation_metrics.py`** - Seaborn visualization script
-3. **10 Visualization Files** - PNG + SVG formats in `results/evaluation_visualizations/`
-
-**Visualizations Generated**:
-- Comparison bar chart (all metrics, all models)
-- Radar/spider chart (multi-dimensional performance)
-- Correlation heatmap (model performance correlation)
-- Metric distributions (9-subplot grid)
-- Improvement chart (percentage improvement)
-
-**Files Created**: 6 new files
-**Files Updated**: 4 files (terminology corrections)
-**Total Size**: ~1.6 MB visualizations
-
----
-
-## 🚀 Deployment Architecture & Approach
-
-### **Deployment Method: Ollama Native Import**
-
-**Why This Approach?**
-- ✅ No C++ compiler required
-- ✅ No external compilation needed
-- ✅ Ollama handles GGUF conversion automatically
-- ✅ Simple and maintainable
-- ✅ Production-proven
-
-**Execution Timeline**:
-- Phase 1-2 (LoRA Merge): ~10 minutes
-- Phase 3-5 (Ollama Import): ~5 minutes
-- Phase 6 (Configuration): ~2 minutes
-- Phase 7 (Integration Tests): ~10 minutes
-- Phase 8 (Cleanup): ~2 minutes
-- **Total**: ~30 minutes
-
-**System Requirements**:
-- Ollama 0.12.6+ (Windows/Mac/Linux)
-- 4-6 GB RAM for inference
-- 2.5 GB disk space for model
-- Intel Iris Xe or equivalent GPU (optional, CPU works)
-
-### **Deployment Summary**
-
-| Aspect | Status | Details |
-|--------|--------|---------|
-| **Active Model** | ✅ DEPLOYED | `llama3.2:newsletter-lora` (2.5 GB) |
-| **Phase 1-2: LoRA Merge** | ✅ COMPLETE | Model merged and verified |
-| **Phase 3-5: Ollama Import** | ✅ COMPLETE | Model imported to Ollama |
-| **Phase 6: Configuration** | ✅ COMPLETE | News Analyst configured for news content processing |
-| **Phase 7: Integration Tests** | ✅ COMPLETE | 4/4 tests passed |
-| **Phase 8: Cleanup** | ✅ COMPLETE | Old model removed, 2.0 GB freed |
-| **Production Ready** | ✅ YES | All systems operational |
-
-**Disk Space Freed**: 2.0 GB (old model removed)
-**System**: Windows Surface Pro (Intel Iris Xe, 16GB RAM)
-
----
-
-## 🚀 Quick Start - Production Deployment
-
-### **Prerequisites**
-
-```bash
-# Ensure Ollama is installed and running
-ollama --version  # Should show version 0.12.6 or later
-```
-
-### **Start Using the Fine-Tuned Model**
-
-```bash
-# 1. Start Ollama service (if not already running)
-ollama serve
-
-# 2. In another terminal, verify the model is available
-ollama list
-# Expected output:
-# NAME                        ID              SIZE
-# llama3.2:newsletter-lora    62ccb34585630   2.5 GB
-# llama3.2:latest             a80c4f17acd5    2.0 GB
-
-# 3. Run the News Analyst with the fine-tuned model
-python ../News-Analyst-MCP-Agent/production_newsletter_analyst.py
-
-# The system will automatically use llama3.2:newsletter-lora
-```
-
-### **Verify Deployment**
-
-```bash
-# Test the model directly
-ollama run llama3.2:newsletter-lora "Analyze this AI newsletter: [your content]"
-
-# Run integration tests
-python test_integration.py
-
-# Expected output: 4/4 tests passed ✅
-```
-
-### **Configuration**
-
-The News Analyst MCP Agent is configured to use the fine-tuned model:
-
-```yaml
-# File: ../News-Analyst-MCP-Agent/mcp_agent.config.yaml
-openai:
-  base_url: http://localhost:11434/v1
-  api_key: ollama
-  default_model: llama3.2:newsletter-lora  # ✅ Active
-```
-
----
-
-## 📁 Current System State
-
-### **Ollama Models**
-
-```
-Active Models:
-├── llama3.2:newsletter-lora (2.5 GB) - DEFAULT ✅
-│   ├── Status: Production model (Tinker LoRA fine-tuned)
-│   ├── Created: October 20, 2025
-│   ├── Inference: 5.1 seconds per news article
-│   ├── Batch Processing: ~51 seconds for 10 articles
-│   └── Quality: +162% improvement over base
-│
-└── llama3.2:latest (2.0 GB) - BACKUP
-    └── Status: Base model (fallback)
-
-Removed Models:
-└── llama3.2:base-backup (2.0 GB) - DELETED ✅
-    └── Disk space freed: 2.0 GB
-```
-
-### **Model Files**
-
-```
-models/merged_lora_model/
-├── model.safetensors (2.5 GB)      # Merged model weights
-├── config.json                      # Model configuration
-├── generation_config.json           # Generation parameters
-├── tokenizer.json (16.4 MB)        # Tokenizer vocabulary
-├── tokenizer_config.json           # Tokenizer configuration
-└── special_tokens_map.json         # Special tokens mapping
-```
-
-### **Configuration Files**
-
-```
-../News-Analyst-MCP-Agent/
-├── mcp_agent.config.yaml           # Active configuration
-│   └── default_model: llama3.2:newsletter-lora ✅
-│
-└── mcp_agent.config.yaml.backup    # Backup (for rollback)
-    └── default_model: llama3.2:latest
-```
-
-### **Verification Status**
-
-| Component | Status | Details |
-|-----------|--------|---------|
-| **Ollama Service** | ✅ Running | Version 0.12.6 |
-| **Model Import** | ✅ Complete | Model in Ollama list |
-| **Configuration** | ✅ Updated | Default model set correctly |
-| **Integration Tests** | ✅ Passing | 4/4 tests passed |
-| **Inference** | ✅ Working | 5.1 seconds per news article |
-| **System** | ✅ Ready | Production deployment ready |
-| **Terminology** | ✅ Corrected | All references updated |
-| **Evaluation Metrics** | ✅ Defined | 11 metrics comprehensively documented |
-| **Visualizations** | ✅ Generated | 5 charts, 10 files (PNG + SVG) |
-
----
-
-## 🔄 Rollback & Troubleshooting
-
-### **Rollback Procedures**
-
-If you need to revert to the base model:
-
-```bash
-# 1. Restore configuration from backup
-cp ../News-Analyst-MCP-Agent/mcp_agent.config.yaml.backup \
-   ../News-Analyst-MCP-Agent/mcp_agent.config.yaml
-
-# 2. Restart the News Analyst
-python ../News-Analyst-MCP-Agent/production_newsletter_analyst.py
-
-# System will now use llama3.2:latest (base model)
-```
-
-### **Troubleshooting Guide**
-
-| Issue | Solution |
-|-------|----------|
-| **Model not loading** | Ensure Ollama running: `ollama serve` |
-| **Inference slow** | Check system resources (CPU/GPU usage) |
-| **Tests fail** | Verify model exists: `ollama list` |
-| **Configuration wrong** | Check backup: `mcp_agent.config.yaml.backup` |
-| **Ollama not found** | Install from https://ollama.ai |
-
----
-
-## 📚 Documentation Index
-
-### **Deployment Documentation**
-
-- **[COMPLETE_DEPLOYMENT_DOCUMENTATION_PHASES_1_8.md](COMPLETE_DEPLOYMENT_DOCUMENTATION_PHASES_1_8.md)** ⭐ **COMPREHENSIVE**
-  - Complete documentation of all 8 deployment phases
-  - Technical approach explanation (Ollama Native Import)
-  - Production deployment instructions
-  - Rollback procedures and troubleshooting guide
-  - Performance metrics and system state
-
-- **[TASK_1_POST_DEPLOYMENT_VERIFICATION.md](TASK_1_POST_DEPLOYMENT_VERIFICATION.md)**
-  - Phase-by-phase verification results
-  - Success criteria confirmation
-  - Overall deployment status
-
-- **[TASK_2_OLD_MODEL_REMOVAL_VERIFICATION.md](TASK_2_OLD_MODEL_REMOVAL_VERIFICATION.md)**
-  - Old model removal confirmation
-  - Disk space freed verification
-  - Current system state
-
-- **[COMPREHENSIVE_VERIFICATION_AND_DOCUMENTATION_SUMMARY.md](COMPREHENSIVE_VERIFICATION_AND_DOCUMENTATION_SUMMARY.md)**
-  - Summary of all verification and documentation tasks
-  - Overall deployment status
-  - Key metrics and findings
-
-### **Evaluation & Metrics Documentation** ⭐ **NEW**
-
-- **[TERMINOLOGY.md](TERMINOLOGY.md)** - Terminology definitions and guidelines
-  - 11 core terms defined with examples
-  - Common confusion points clarified
-  - Quick reference table
-  - Usage guidelines for documentation
-
-- **[EVALUATION_METRICS_DEFINITIONS.md](EVALUATION_METRICS_DEFINITIONS.md)** - Comprehensive metric definitions
-  - All 11 evaluation metrics explained
-  - Score ranges and interpretations
-  - Good/excellent performance thresholds
-  - Limitations and use cases
-  - Baseline vs fine-tuned comparison
-
-- **[CRITICAL_UPDATES_COMPLETION_SUMMARY.md](CRITICAL_UPDATES_COMPLETION_SUMMARY.md)** - October 21, 2025 updates
-  - Task 1: Terminology clarification
-  - Task 2: Comprehensive evaluation script
-  - Task 3: Metrics definitions and visualizations
-  - All deliverables and files created/updated
-
-- **[THREE_TASKS_COMPLETION_SUMMARY.md](THREE_TASKS_COMPLETION_SUMMARY.md)** - Previous tasks summary
-  - Workspace reorganization proposal
-  - Model performance evaluation
-  - Training data validation
-
-- **[PRODUCTION_MODEL_EVALUATION_REPORT.md](PRODUCTION_MODEL_EVALUATION_REPORT.md)** - Detailed evaluation report
-  - Comprehensive performance analysis
-  - Comparative analysis (Baseline vs Tinker vs Unsloth)
-  - Production readiness assessment
-  - Recommendations for ongoing monitoring
-
-### **Evaluation Scripts & Visualizations**
-
-- **`comprehensive_model_evaluation.py`** - Enhanced evaluation script
-  - Response length metrics
-  - JSON validity tracking
-  - Success rate calculation
-  - Inference time measurement
-  - Aggregate statistics
-
-- **`visualize_evaluation_metrics.py`** - Seaborn visualization script
-  - 5 publication-quality visualizations
-  - Both PNG (high-res) and SVG formats
-  - Consistent styling and labeling
-
-- **`results/evaluation_visualizations/`** - Generated visualizations
-  - `01_comparison_bar_chart.png/svg` - All metrics comparison
-  - `02_radar_chart.png/svg` - Multi-dimensional performance
-  - `03_correlation_heatmap.png/svg` - Model correlation
-  - `04_metric_distributions.png/svg` - Score distributions
-  - `05_improvement_chart.png/svg` - Improvement percentages
-
-### **Data Schema & Annotation** ⭐ **NEW**
-
-- **[ANNOTATION_SCHEMA_DOCUMENTATION_INDEX.md](ANNOTATION_SCHEMA_DOCUMENTATION_INDEX.md)** - Complete documentation index
-  - Navigation guide for all schema documentation
-  - Quick links to all resources
-  - File descriptions and purposes
-
-- **[docs/DATA_SCHEMA.md](docs/DATA_SCHEMA.md)** - Authoritative schema reference
-  - Complete schema structure in JSON
-  - Detailed field definitions
-  - Quality score [0-7] interpretation
-  - Validation rules and results
-  - Usage examples
-
-- **[DATA_SCHEMA_QUICK_REFERENCE.md](DATA_SCHEMA_QUICK_REFERENCE.md)** - Quick reference guide
-  - One-minute overview
-  - Field tables
-  - Complete example
-  - Common tasks
-
-- **[docs/DATA_PREPARATION.md](docs/DATA_PREPARATION.md)** - Data collection and annotation
-  - Data collection process
-  - Annotation guidelines
-  - Complete schema documentation
-  - Quality control procedures
-  - Data splitting methodology
-
-- **[annotation_validation_report.json](annotation_validation_report.json)** - Validation results
-  - Schema validation status: VALID ✅
-  - All 101 records validated
-  - Quality score range [0-7]
-  - 0 validation issues
-
-**Key Schema Information**:
-- **Quality Score Range**: [0-7] (0=Invalid, 1-2=Poor, 3-4=Fair, 5-6=Good, 7=Excellent)
-- **Required Annotation Fields**: relevance_score, topics, companies, summary, quality, status
-- **Optional Annotation Fields**: instruction, news_content, notes
-- **Validation Status**: ✅ VALID (101/101 records)
-
-### **Project Documentation**
-
-- [System Architecture](docs/NEWS_ANALYST_SYSTEM_ARCHITECTURE.md) - How this fits into the larger news analyst system
-- [LoRA Comparison](docs/LORA_COMPARISON.md) - Why LoRA was chosen over full fine-tuning
-- [Fine-Tuning Configuration](docs/FINE_TUNING_CONFIGURATION.md) - Model and training parameters
-- [Data Preparation](docs/DATA_PREPARATION.md) - Annotation process and data formatting
-- [Evaluation Methodology](docs/EVALUATION_METHODOLOGY.md) - Metrics and evaluation process
+## 📚 Documentation
+
+- [System Architecture](docs/NEWS_ANALYST_SYSTEM_ARCHITECTURE.md): how this fits into the larger news analyst system
+- [LoRA Comparison](docs/LORA_COMPARISON.md): why I chose LoRA over full fine tuning
+- [Fine-Tuning Configuration](docs/FINE_TUNING_CONFIGURATION.md): model and training parameters
+- [Data Preparation](docs/DATA_PREPARATION.md): annotation process and data formatting
+- [Evaluation Methodology](docs/EVALUATION_METHODOLOGY.md): metrics and evaluation process
+- [Results README](results/metrics/README.md): description of the stored result files
+
+These documents date from October 2025. They have not been corrected and still contain claims that this README removed. Treat this README and its [Corrections](#corrections) section as the current record.
 
 ---
 
@@ -757,8 +153,8 @@ nvidia-smi  # Optional: Check GPU availability
 
 ```bash
 # Clone repository
-git clone https://github.com/youshen-lim/llama-tinker-lora-newsletter.git
-cd llama-tinker-lora-newsletter
+git clone https://github.com/youshen-lim/llama-tinker-lora-news-enhancer.git
+cd llama-tinker-lora-news-enhancer
 
 # Install dependencies
 pip install -r requirements.txt
@@ -766,12 +162,14 @@ pip install -r requirements.txt
 
 ### **Training Data**
 
-- **Training examples**: 101 fully annotated news articles (messages + metadata + annotation)
-- **Test examples**: 246 non-annotated news articles (messages + metadata only)
-- **Total collected**: 347 news articles
-- **Format**: JSONL with user/assistant message pairs
-- **Annotation**: Custom widget for manual annotation (101 examples)
-- **Evaluation**: Reference-based metrics (ROUGE, BERTScore, JSON validity, consistency)
+- **Training file**: 101 news items (`data/processed/newsletter_train_data.jsonl`)
+- **Test file**: 246 news items (`data/processed/newsletter_test_data.jsonl`)
+- **Total collected**: 347 news items (`data/processed/newsletter_training_data.jsonl`)
+- **Annotated file**: 101 news items with my hand annotations (`data/processed/newsletter_training_annotated.jsonl`)
+- **Format**: JSONL with user and assistant message pairs
+- **Assistant targets**: The assistant messages in these files use six fixed template responses.
+- **Hand annotations**: My annotations (relevance, topics, companies) sit in a separate `annotation` field. In 97 of the 101 annotated rows, the `summary` annotation is empty.
+- **Evaluation**: The notebook scored 5 examples only. See [Results](#-results-pilot-needs-rerun).
 
 ```bash
 # View training data
@@ -780,21 +178,25 @@ head -n 5 data/processed/newsletter_train_data.jsonl
 
 ### **Fine-Tuning**
 
-#### **Option 1: Tinker API (Recommended)**
+#### **Option 1: Tinker API**
 
 ```python
-# See notebooks/News_Analyst_1_Notebook.ipynb for complete workflow
-# Training time: ~2.65 minutes for 3 epochs
+# See notebooks/News_Analyst_1_Notebook.ipynb for the complete workflow
+# 3 epochs on 101 examples. The notebook output does not record the training time.
 ```
 
 #### **Option 2: Unsloth (Local)**
 
 ```python
-# See notebooks/News_Analyst_1_Notebook.ipynb for complete workflow
-# Training time: ~0.94 minutes for 3 epochs
+# See notebooks/News_Analyst_1_Notebook.ipynb for the complete workflow
+# Training time: 0.94 minutes for 3 epochs (notebook cell 70)
 ```
 
 ### **Inference**
+
+The adapter weights are on Hugging Face: [Truthseeker87/llama-tinker-lora-news-enhancer](https://huggingface.co/Truthseeker87/llama-tinker-lora-news-enhancer). The GitHub repository holds only the adapter configuration.
+
+The adapter configuration names an invalid base model ID (`meta-llama/Llama-2.0-3.2-1B`), and the Hugging Face page reports a parsing warning for it. The example below may fail until I fix that configuration. The Meta base model is gated, so you need approved access to it.
 
 ```python
 from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -803,8 +205,8 @@ from peft import PeftModel
 # Load base model
 base_model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-3.2-1B")
 
-# Load LoRA adapter
-model = PeftModel.from_pretrained(base_model, "models/tinker/")
+# Load LoRA adapter from Hugging Face
+model = PeftModel.from_pretrained(base_model, "Truthseeker87/llama-tinker-lora-news-enhancer")
 model = model.merge_and_unload()
 
 # Load tokenizer
@@ -824,68 +226,49 @@ print(response)
 ## 📁 Project Structure
 
 ```
-newsletter-finetuning/
-├── README.md                                    # This file
+llama-tinker-lora-news-enhancer/
+├── README.md
 ├── LICENSE                                      # MIT License
-├── .gitignore                                   # Git ignore rules
-├── requirements.txt                             # Python dependencies
+├── .env.example
+├── .gitignore
+├── requirements.txt
 │
 ├── notebooks/
-│   ├── News_Analyst_1_Notebook.ipynb           # Main fine-tuning workflow
-│   └── JSONL_Annotation_Notebook_Final.ipynb   # Annotation tool
+│   ├── News_Analyst_1_Notebook.ipynb           # Main fine-tuning and evaluation workflow
+│   └── news_analyst_1.py                       # Script export of the notebook
 │
 ├── scripts/
 │   └── news_analyst_1_notebook.py              # Python script version
 │
+├── src/
+│   ├── data/annotation_widget.py               # Annotation widget
+│   ├── models/tinker_dataset.py
+│   ├── models/tinker_dataset_builder.py
+│   └── utils/inspect_builder.py
+│
 ├── data/
 │   └── processed/
-│       ├── newsletter_train_data.jsonl         # Training data (101 examples, simplified format)
-│       ├── newsletter_test_data.jsonl          # Test data (246 examples, non-annotated)
-│       └── newsletter_training_annotated.jsonl # Annotated training data (101 examples, authoritative)
+│       ├── newsletter_train_data.jsonl         # Training file (101 items)
+│       ├── newsletter_test_data.jsonl          # Test file (246 items)
+│       ├── newsletter_training_annotated.jsonl # Annotated training items (101 items)
+│       └── newsletter_training_data.jsonl      # All collected items (347 items)
 │
 ├── models/
-│   ├── tinker/                                 # Tinker LoRA adapter
-│   ├── unsloth/                                # Unsloth LoRA adapter
-│   └── baseline/                               # Base model info
+│   └── tinker/tinker_model_latest/
+│       └── adapter_config.json                 # Tinker adapter configuration (weights are on Hugging Face)
 │
 ├── results/
-│   ├── metrics/                                # Evaluation metrics
-│   ├── visualizations/                         # Charts and graphs
-│   └── reports/                                # Evaluation reports
+│   └── metrics/                                # Stored pilot results (see Limitations)
+│
+├── images/                                     # Charts used in this README
 │
 └── docs/
-    ├── NEWS_ANALYST_SYSTEM_ARCHITECTURE.md     # Production system overview
-    ├── LORA_COMPARISON.md                      # LoRA vs full fine-tuning
-    ├── FINE_TUNING_CONFIGURATION.md            # Model configuration
-    ├── EVALUATION_METHODOLOGY.md               # Evaluation metrics
-    ├── DATA_PREPARATION.md                     # Data annotation process
-    ├── TINKER_TRAINING_GUIDE.md                # Tinker API guide
-    ├── MODEL_DEPLOYMENT.md                     # Deployment instructions
-    └── TROUBLESHOOTING.md                      # Common issues and fixes
+    ├── NEWS_ANALYST_SYSTEM_ARCHITECTURE.md
+    ├── LORA_COMPARISON.md
+    ├── FINE_TUNING_CONFIGURATION.md
+    ├── EVALUATION_METHODOLOGY.md
+    └── DATA_PREPARATION.md
 ```
-
----
-
-## 📚 Documentation
-
-### **Quick Reference Documents**
-- **README.md** (this file) - Start here for deployment status and quick start
-- **COMPLETE_DEPLOYMENT_DOCUMENTATION_PHASES_1_8.md** - Detailed deployment guide for all 8 phases
-- **COMPREHENSIVE_PRODUCTION_ASSESSMENT_REPORT.md** - Detailed production readiness assessment
-- **TASK_1_POST_DEPLOYMENT_VERIFICATION.md** - Phase verification results
-- **TASK_2_OLD_MODEL_REMOVAL_VERIFICATION.md** - Model removal verification
-
-### **Core Documentation**
-- [**System Architecture**](docs/NEWS_ANALYST_SYSTEM_ARCHITECTURE.md) - How this fits into the larger news analyst system
-- [**LoRA Comparison**](docs/LORA_COMPARISON.md) - Why LoRA was chosen over full fine-tuning
-- [**Fine-Tuning Configuration**](docs/FINE_TUNING_CONFIGURATION.md) - Model and training parameters
-
-### **Guides**
-- [**Data Preparation**](docs/DATA_PREPARATION.md) - Annotation process and data formatting
-- [**Tinker Training**](docs/TINKER_TRAINING_GUIDE.md) - Using Tinker API for fine-tuning
-- [**Model Deployment**](docs/MODEL_DEPLOYMENT.md) - Local deployment instructions
-- [**Evaluation Methodology**](docs/EVALUATION_METHODOLOGY.md) - Metrics and evaluation process
-- [**Troubleshooting**](docs/TROUBLESHOOTING.md) - Common issues and solutions
 
 ---
 
@@ -894,56 +277,59 @@ newsletter-finetuning/
 - **Base Model**: [LLaMA 3.2-1B](https://huggingface.co/meta-llama/Llama-3.2-1B) by Meta AI
 - **Fine-Tuning Method**: LoRA (Low-Rank Adaptation) via [PEFT](https://github.com/huggingface/peft)
 - **Training Platforms**:
-  - [Tinker API](https://tinker.thinking.ai/) - Managed fine-tuning service
+  - [Tinker API](https://thinkingmachines.ai/tinker/) - Managed fine-tuning service
   - [Unsloth](https://github.com/unslothai/unsloth) - Optimized local fine-tuning
-- **Evaluation**: ROUGE, BERTScore, Sentence-BERT, JSON schema validation
-- **Deployment**: Local inference with [Transformers](https://huggingface.co/transformers)
+- **Evaluation**: ROUGE, BERTScore, Sentence-BERT, JSON validity
+- **Local inference**: [Transformers](https://huggingface.co/docs/transformers) and [Ollama](https://ollama.com)
 
 ---
 
-## 📋 **ASSESSMENT SUMMARY**
+## Limitations
 
-### **Deployment Verification**
-- ✅ **All 8 Phases Verified Complete**
-  - Phase 1-2: LoRA merge successful (2.5 GB model)
-  - Phase 3-5: Ollama import successful
-  - Phase 6: Configuration updated and verified
-  - Phase 7: Integration tests passing (4/4)
-  - Phase 8: Old model removed, 2.0 GB freed
+- The evaluation scored 5 examples. The results do not support conclusions about quality on new articles.
+- The 5 predictions came from rows of the training file, so the evaluation did not use held out articles.
+- The evaluation took its references from the separate test file, so the references describe different articles than the predictions. The quality score, ROUGE, BERTScore and Sentence-BERT values are invalid as quality measures and need a rerun.
+- The assistant targets in the training and test files are fixed template responses. The Tinker adapter learned to reproduce those templates. Its zero length variation reflects repeated templates, not consistency of analysis.
+- My hand annotations sit in a separate `annotation` field. I have not confirmed whether any of them reached the Tinker training targets.
+- I did not run full fine tuning, so I have no measured comparison between LoRA and full fine tuning.
+- I did not record inference time or Tinker training time.
+- I did not measure the effect on NotebookLM output.
+- The News Analyst agent that uses this adapter is private, so the deployment steps cannot be reproduced from this repository.
+- The adapter configuration names an invalid base model ID. The inference example may fail until I fix it.
+- Five JSON result files in `results/metrics/` (`advanced_metrics_*.json` and `complete_evaluation_*.json`) do not parse. A placeholder string appears inside numeric fields. The placeholder has been present since the initial commit in October 2025.
+- The documents in `docs/` and `results/metrics/README.md` date from October 2025 and still contain claims that this README removed.
+- Version 2 uses a separate 96 item held out test set. See [llama-tinker-lora-news-enhancer-v2](https://github.com/youshen-lim/llama-tinker-lora-news-enhancer-v2).
 
-- ✅ **Model Deployed and Operational**
-  - Model: `llama3.2:newsletter-lora`
-  - Status: Running and responsive
-  - Inference time: 5.1 seconds per news article
+---
 
-- ✅ **Configuration Updated and Verified**
-  - News Analyst MCP Agent config: Correct
-  - Default model: `llama3.2:newsletter-lora`
-  - Base URL: `http://localhost:11434/v1`
+## Corrections
 
-- ✅ **All Integration Tests Passing**
-  - Ollama service status: ✅ PASS
-  - Model availability: ✅ PASS
-  - Model inference: ✅ PASS
-  - Configuration verification: ✅ PASS
+I corrected the following items on **November 20, 2026** after I rechecked this README against the notebook, the data files and the result files in this repository. The data, adapter and evaluation code are unchanged.
 
-### **Risk Assessment**
-- **Overall Risk Level**: ✅ **LOW**
-- **Critical Issues**: NONE identified
-- **Gaps**: NONE identified
-- **Mitigation**: Configuration backup, rollback procedures documented
+| Item | Previously stated | Corrected to | Cause |
+|------|-------------------|--------------|-------|
+| Evaluation set | 246 test articles; evaluation on reference based metrics | 5 examples scored; predictions from training file rows; references from different test file articles | The notebook ran `num_samples=5` on the training file and then took references from the 246 row test file. The 246 figure is the size of the test file. |
+| Quality score | 0.8674 vs 0.3302 base | Removed; needs rerun | The predictions and references came from different articles, and the references were template strings. |
+| Quality improvement | +162% quality improvement | Removed; needs rerun | Same cause as the quality score. |
+| ROUGE-1 | 0.7714 vs 0.0501 base (+1439%) | Removed; needs rerun | Same cause as the quality score. |
+| BERTScore | 0.9649 vs 0.8003 base (+20%) | Removed; needs rerun | Same cause as the quality score. |
+| Quality score formula | 0.25, 0.15, 0.15, 0.20, 0.15, 0.10 weights over six metrics | 0.2 ROUGE-1, 0.2 ROUGE-L, 0.3 BERTScore, 0.2 Sentence-BERT, 0.1 JSON validity | The README formula did not match the notebook code. |
+| Consistency | 45.2% CV to 0.0% CV; "Perfect Consistency" | Removed | The files give different base values. Zero variation reflected repeated template responses. |
+| Inference time | 5.1 seconds per article; about 51 seconds for 10 articles | Removed | No measurement exists in the repository. |
+| Tinker training time | 2.65 minutes | Not recorded | No notebook output shows this figure. |
+| Trainable parameters | 0.5% trainable; 99.5% parameter reduction | Unsloth 0.90%; Tinker not recorded | The Unsloth notebook output reports 0.90%. No output records the Tinker figure. |
+| LoRA vs full fine tuning | Memory, speed, size and data tables; 90 to 95% of full fine tuning; 9.2/10 vs 6.0/10 | Removed | I never ran full fine tuning. The scores were my own ratings. |
+| Ollama vs llama.cpp | Load time, tokens per second and latency figures; llama.cpp "Command-line only" | Removed | I did not benchmark either tool. llama.cpp also ships an HTTP server. |
+| Benefit multipliers | 3-5x, 10x, 2-3x, 40-60% | Removed | No measurement exists. |
+| Status | Production Ready; Risk Level LOW; zero issues; Gaps NONE | Removed | The results do not support these statements. |
+| Deployment claims | 8 phases complete; integration tests 4/4; workspace cleanup counts | Replaced with a short local use note | The test script, logs and workspace are not part of this repository. |
+| Architecture | Production system with Tinker and Unsloth branches | Private personal project that uses the Tinker adapter | The Unsloth v1 adapter failed the JSON check and is not used. |
+| Broken links | 21 missing documents and scripts | Removed | The files do not exist in this repository. |
+| Inference example | Loads the local path `models/tinker/` | Loads the Hugging Face adapter, with a configuration warning | The local path holds no weights. |
+| Clone URL | llama-tinker-lora-newsletter | llama-tinker-lora-news-enhancer | Old repository name. |
+| External links | tinker.thinking.ai, ollama.ai, huggingface.co/transformers | thinkingmachines.ai/tinker, ollama.com, huggingface.co/docs/transformers | The first link fails. The other two redirect. |
 
-### **Key Findings**
-- ✅ System is fully operational and thoroughly tested
-- ✅ Performance metrics excellent (+162% quality improvement)
-- ✅ Workspace clean and organized (47 redundant files removed)
-- ✅ Documentation comprehensive and up-to-date
-- ✅ Zero outstanding issues
-
-### **Recommendation**
-**Status**: ✅ **PRODUCTION READY**
-
-The system is fully operational, thoroughly tested, and ready for immediate production use. All success criteria have been met with no outstanding issues identified.
+I rechecked the file counts (101, 246 and 347 items), the six template targets, the 5 example evaluation and the Unsloth training time and trainable parameters against the notebook and data files in this repository.
 
 ---
 
@@ -978,9 +364,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **Aaron (Youshen) Lim** - [@youshen-lim](https://github.com/youshen-lim)
 
-Project Link: [https://github.com/youshen-lim/llama-tinker-lora-newsletter](https://github.com/youshen-lim/llama-tinker-lora-newsletter)
+Project Link: [https://github.com/youshen-lim/llama-tinker-lora-news-enhancer](https://github.com/youshen-lim/llama-tinker-lora-news-enhancer)
 
 ---
 
 ⭐ If you find this project useful, please consider giving it a star!
-
