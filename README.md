@@ -25,7 +25,7 @@ I wanted structured metadata on each news item. My goal was to help Google Noteb
 ### **What This Project Does**
 
 - **Enhance and add rich semantic metadata to AI-related news content** as part of my news analyst application system
-- **Explore, test and compare Thinking Machines' Tinker's managed training & finetuning API service**
+- **Explore and compare the managed Tinker training and fine tuning API from Thinking Machines**
 - **Explore LastMile AI's MCP (Model Context Protocol) framework** for building AI-powered applications
 
 ### **Why This Matters to Me**
@@ -296,9 +296,9 @@ llama-tinker-lora-news-enhancer/
 - I did not measure the effect on NotebookLM output.
 - The News Analyst agent that uses this adapter is private, so the deployment steps cannot be reproduced from this repository.
 - The adapter configuration names an invalid base model ID. The inference example may fail until I fix it.
-- Five JSON result files in `results/metrics/` (`advanced_metrics_*.json` and `complete_evaluation_*.json`) no longer parse. A placeholder string replaced digits in some numeric fields during an August 2026 cleanup.
+- Five JSON result files in `results/metrics/` (`advanced_metrics_*.json` and `complete_evaluation_*.json`) do not parse. A placeholder string appears inside numeric fields. The placeholder has been present since the initial commit in October 2025.
 - The documents in `docs/` and `results/metrics/README.md` date from October 2025 and still contain claims that this README removed.
-- Version 2 addresses the data and evaluation gaps. See [llama-tinker-lora-news-enhancer-v2](https://github.com/youshen-lim/llama-tinker-lora-news-enhancer-v2).
+- Version 2 uses a separate 96 item held out test set. See [llama-tinker-lora-news-enhancer-v2](https://github.com/youshen-lim/llama-tinker-lora-news-enhancer-v2).
 
 ---
 
