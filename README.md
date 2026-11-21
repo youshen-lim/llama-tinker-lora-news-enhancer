@@ -303,7 +303,7 @@ llama-tinker-lora-news-enhancer/
 
 ## Corrections
 
-I corrected the following items on **November 20, 2026** after I rechecked this README against the notebook, the data files and the result files in this repository. The data, adapter and evaluation code are unchanged.
+I corrected the following items on **November 20, 2026** after I rechecked this README against the notebook, the data files and the result files in this repository. The data, adapter weights and evaluation code are unchanged. On November 21, 2026 I changed one field in the adapter configuration, `base_model_name_or_path`, to `unsloth/Llama-3.2-1B`.
 
 | Item | Previously stated | Corrected to | Cause |
 |------|-------------------|--------------|-------|
@@ -324,7 +324,7 @@ I corrected the following items on **November 20, 2026** after I rechecked this 
 | Deployment claims | 8 phases complete; integration tests 4/4; workspace cleanup counts | Replaced with a short local use note | The test script, logs and workspace are not part of this repository. |
 | Architecture | Production system with Tinker and Unsloth branches | Private personal project that uses the Tinker adapter | The Unsloth v1 adapter failed the JSON check and is not used. |
 | Broken links | 21 missing documents and scripts | Removed | The files do not exist in this repository. |
-| Inference example | Loads the local path `models/tinker/` | Loads the Hugging Face adapter, with a configuration warning | The local path holds no weights. |
+| Inference example | Loads the local path `models/tinker/` | Loads the Hugging Face adapter | The local path holds no weights. |
 | Clone URL | llama-tinker-lora-newsletter | llama-tinker-lora-news-enhancer | Old repository name. |
 | External links | tinker.thinking.ai, ollama.ai, huggingface.co/transformers | thinkingmachines.ai/tinker, ollama.com, huggingface.co/docs/transformers | The first link fails. The other two redirect. |
 | Adapter base model ID (November 21, 2026) | Invalid base model ID `meta-llama/Llama-2.0-3.2-1B`; the inference example may fail until I fix the configuration | `unsloth/Llama-3.2-1B`, an ungated mirror of `meta-llama/Llama-3.2-1B` | I changed `base_model_name_or_path` in the adapter configuration on November 21, 2026. The old ID was invalid. |
