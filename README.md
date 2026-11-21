@@ -196,7 +196,7 @@ head -n 5 data/processed/newsletter_train_data.jsonl
 
 The adapter weights are on Hugging Face: [Truthseeker87/llama-tinker-lora-news-enhancer](https://huggingface.co/Truthseeker87/llama-tinker-lora-news-enhancer). The GitHub repository holds only the adapter configuration.
 
-The adapter configuration names an invalid base model ID (`meta-llama/Llama-2.0-3.2-1B`), and the Hugging Face page reports a parsing warning for it. The example below may fail until I fix that configuration. The Meta base model is gated, so you need approved access to it.
+The adapter configuration records `base_model_name_or_path` as `unsloth/Llama-3.2-1B`, an ungated mirror of `meta-llama/Llama-3.2-1B`, the base model I trained on. I set this value on November 21, 2026. The example below loads the gated Meta base model, so you need approved access to it.
 
 ```python
 from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -295,7 +295,6 @@ llama-tinker-lora-news-enhancer/
 - I did not record inference time or Tinker training time.
 - I did not measure the effect on NotebookLM output.
 - The News Analyst agent that uses this adapter is private, so the deployment steps cannot be reproduced from this repository.
-- The adapter configuration names an invalid base model ID. The inference example may fail until I fix it.
 - Five JSON result files in `results/metrics/` (`advanced_metrics_*.json` and `complete_evaluation_*.json`) do not parse. A placeholder string appears inside numeric fields. The placeholder has been present since the initial commit in October 2025.
 - The documents in `docs/` and `results/metrics/README.md` date from October 2025 and still contain claims that this README removed.
 - Version 2 uses a separate 96 item held out test set. See [llama-tinker-lora-news-enhancer-v2](https://github.com/youshen-lim/llama-tinker-lora-news-enhancer-v2).
@@ -304,7 +303,7 @@ llama-tinker-lora-news-enhancer/
 
 ## Corrections
 
-I corrected the following items on **November 20, 2026** after I rechecked this README against the notebook, the data files and the result files in this repository. The data, adapter and evaluation code are unchanged.
+I corrected the following items on **November 20, 2026** after I rechecked this README against the notebook, the data files and the result files in this repository. The data, adapter weights and evaluation code are unchanged. On November 21, 2026 I changed one field in the adapter configuration, `base_model_name_or_path`, to `unsloth/Llama-3.2-1B`.
 
 | Item | Previously stated | Corrected to | Cause |
 |------|-------------------|--------------|-------|
@@ -325,9 +324,11 @@ I corrected the following items on **November 20, 2026** after I rechecked this 
 | Deployment claims | 8 phases complete; integration tests 4/4; workspace cleanup counts | Replaced with a short local use note | The test script, logs and workspace are not part of this repository. |
 | Architecture | Production system with Tinker and Unsloth branches | Private personal project that uses the Tinker adapter | The Unsloth v1 adapter failed the JSON check and is not used. |
 | Broken links | 21 missing documents and scripts | Removed | The files do not exist in this repository. |
-| Inference example | Loads the local path `models/tinker/` | Loads the Hugging Face adapter, with a configuration warning | The local path holds no weights. |
+| Inference example | Loads the local path `models/tinker/` | Loads the Hugging Face adapter | The local path holds no weights. |
 | Clone URL | llama-tinker-lora-newsletter | llama-tinker-lora-news-enhancer | Old repository name. |
 | External links | tinker.thinking.ai, ollama.ai, huggingface.co/transformers | thinkingmachines.ai/tinker, ollama.com, huggingface.co/docs/transformers | The first link fails. The other two redirect. |
+| Adapter base model ID (November 21, 2026) | Invalid base model ID `meta-llama/Llama-2.0-3.2-1B`; the inference example may fail until I fix the configuration | `unsloth/Llama-3.2-1B`, an ungated mirror of `meta-llama/Llama-3.2-1B` | I changed `base_model_name_or_path` in the adapter configuration on November 21, 2026. The old ID was invalid. |
+| License (November 21, 2026) | MIT License only | MIT License for the repository files; Llama 3.2 Community License for the Llama 3.2 base model | The README did not name the license of the base model. |
 
 I rechecked the file counts (101, 246 and 347 items), the six template targets, the 5 example evaluation and the Unsloth training time and trainable parameters against the notebook and data files in this repository.
 
@@ -348,6 +349,8 @@ Contributions are welcome! Please:
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+The MIT License covers only the files in this repository. The [Llama 3.2 Community License](https://huggingface.co/meta-llama/Llama-3.2-1B) governs the Llama 3.2 base model (`meta-llama/Llama-3.2-1B`).
 
 ---
 
